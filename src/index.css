@@ -1,0 +1,26 @@
+@tailwind base;
+
+@layer base {
+    h1 {
+        @apply text-3xl m-2;
+    }
+    h2 {
+        @apply text-2xl m-1;
+    }
+    h3 {
+        @apply text-lg;
+    }
+    a {
+        @apply text-blue-600 underline;
+    }
+    input {
+        @apply border border-black;
+    }
+}
+
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --nav-width: 50px;
+}

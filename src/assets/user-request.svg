@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="68.736397mm"
+   height="55.005463mm"
+   viewBox="0 0 68.736397 55.005463"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="ArrowWideRounded"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:round"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         id="path2" />
+    </marker>
+  </defs>
+  <g
+     id="layer1"
+     transform="translate(-77.472429,-53.373221)">
+    <g
+       id="g13">
+      <path
+         id="path1"
+         style="fill:#1a1a1a;stroke-width:0.0722979"
+         d="M 113.71809,64.600235 A 11.227015,11.227015 0 0 1 102.49107,75.82725 11.227015,11.227015 0 0 1 91.264059,64.600235 11.227015,11.227015 0 0 1 102.49107,53.37322 11.227015,11.227015 0 0 1 113.71809,64.600235 Z" />
+      <path
+         id="path1-0"
+         style="fill:#1a1a1a;stroke-width:0.176156"
+         transform="scale(-1)"
+         d="m -77.472424,-108.37868 a 25.01865,29.909515 0 0 1 -12.509325,25.902403 25.01865,29.909515 0 0 1 -25.018651,-10e-7 25.01865,29.909515 0 0 1 -12.50932,-25.902402" />
+      <path
+         style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:3.196;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#ArrowWideRounded)"
+         d="m 124.01308,79.964699 h 22.19574"
+         id="path12" />
+    </g>
+  </g>
+</svg>
