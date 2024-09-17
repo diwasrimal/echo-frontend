@@ -1,22 +1,32 @@
-import { useEffect, useState } from "react";
-import ContentCenteredDiv from "./ContentCenteredDiv";
+import { useEffect } from "react";
 import { Navigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 export default function Logout() {
-    const [ok, setOk] = useState(false);
+  // const [navigate, setNavigate] = useState(false);
+  // const { setLoggedIn, setUserId, checking, loggedIn, userId, setJwt, jwt } =
+  // useAuth();
+  const { setLoggedIn, setUserId } = useAuth();
 
-    useEffect(() => {
-        fetch("/api/logout", {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-        }).then((res) => setOk(res.ok));
-    }, []);
+  // Reset all states and clear storage
+  useEffect(() => {
+    // const id = setTimeout(() => setNavigate(true), 2000);
 
-    if (ok) {
-        sessionStorage.clear();
-        localStorage.clear();
-        return <Navigate to="/login" />;
-    }
+    // console.log(
+    //   `AuthContext during logout: checking: ${checking}, loggedIn: ${loggedIn}, userId: ${userId}, jwt: ${jwt}`,
+    // );
+    localStorage.clear();
+    sessionStorage.clear();
+    setLoggedIn(false);
+    setUserId(-1);
+    // setJwt("");
 
-    return <ContentCenteredDiv>Logging out...</ContentCenteredDiv>;
+    // return () => clearTimeout(id);
+  }, []);
+
+  // if (navigate) {
+  return <Navigate to="/get-started" />;
+  // } else {
+  //   return <div>Logging out...</div>;
+  // }
 }
