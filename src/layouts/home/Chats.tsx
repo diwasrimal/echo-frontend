@@ -6,11 +6,12 @@ import { cn, fetchWithDelay, makePayload } from "@/lib/utils";
 import { Navigate } from "react-router-dom";
 import UserIcon from "@/components/UserIcon";
 import { useState, useEffect } from "react";
+import DummyText from "@/components/DummyText";
 
 export default function Chats() {
   return (
     <div className="overflow-auto h-full flex flex-col">
-      <div className="min-h-[60px] h-[60px] flex items-center justify-center border-b p-2">
+      <div className="flex-shrink-0 h-[60px] flex items-center justify-center border-b p-2">
         <h1 className="text-2xl font-bold">Chats</h1>
       </div>
       <ChatPartnersList />

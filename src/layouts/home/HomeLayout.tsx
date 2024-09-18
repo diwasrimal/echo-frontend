@@ -35,7 +35,7 @@ export default function HomeLayout() {
         </div>
 
         <OpenedChatProvider>
-          <div className="hidden sm:w-[200px] sm:block lg:w-[300px] h-full border-l">
+          <div className="hidden sm:w-[200px] sm:block lg:w-[300px] flex-shrink-0 h-full border-l">
             <Outlet />
           </div>
           <div className="flex-grow h-full border-l">
@@ -89,7 +89,7 @@ function ChatArea() {
   return (
     <div className="flex flex-col h-full overflow-auto">
       {/* Top title */}
-      <div className="min-h-[60px] h-[60px] border-b flex justify-between items-center px-4">
+      <div className="flex-shrink-0 h-[60px] border-b flex justify-between items-center px-4">
         <div className="flex gap-2 justify-center items-center">
           <UserIcon user={chatPartner} />
           <div className="font-bold text-lg">{chatPartner.fullname}</div>
@@ -102,9 +102,7 @@ function ChatArea() {
       </div>
 
       {/* Messages */}
-      <div className="flex-grow overflow-scroll">
-        <DummyText more={false} />
-      </div>
+      <div className="flex-grow overflow-scroll"></div>
 
       {/* Text area */}
       <div className="flex gap-2 items-center py-2 px-4 border-t">
