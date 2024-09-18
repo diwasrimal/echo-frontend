@@ -1,5 +1,4 @@
 import ContentCenteredDiv from "@/components/ContentCenteredDiv";
-import { Progress } from "@/components/ui/progress";
 import useAuth from "@/hooks/useAuth";
 import { PropsWithChildren } from "react";
 import { Navigate } from "react-router-dom";

@@ -1,13 +1,19 @@
 import { SERVER_URL } from "@/lib/constants";
 import { makePayload } from "@/lib/utils";
-import { createContext, PropsWithChildren, useEffect, useState } from "react";
+import {
+  createContext,
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 type AuthContextType = {
   checking: boolean;
   loggedIn: boolean;
-  setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+  setLoggedIn: (loggedIn: boolean) => void;
   userId: number;
-  setUserId: React.Dispatch<React.SetStateAction<number>>;
+  setUserId: (id: number) => void;
   // jwt: string;
   // setJwt: React.Dispatch<React.SetStateAction<string>>;
 };
@@ -52,7 +58,9 @@ export default function AuthProvider({ children }: PropsWithChildren) {
           setLoggedIn(true);
           setUserId(payload.userId);
         } else {
-          throw `Authorization check failed: ${payload.message || "Unknown error"}`;
+          throw new Error(
+            `Authorization check failed: ${payload.message || "Unknown error"}`,
+          );
         }
       })
       .catch((err) => console.log(`Error fetching ${url}: ${err}`))

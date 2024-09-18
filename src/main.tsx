@@ -15,12 +15,17 @@ import ProtectedRoute from "./wrappers/ProtectedRoute.tsx";
 import Logout from "./components/Logout.tsx";
 import useAuth from "./hooks/useAuth.tsx";
 import Home from "@/components/Home.tsx";
+import { ThemeProvider } from "./contexts/ThemeProvider.tsx";
+import HomeLayout from "./layouts/home/HomeLayout.tsx";
+import Chats from "./layouts/home/Chats.tsx";
+import People from "./layouts/home/People.tsx";
+import Error404 from "./components/Error404.tsx";
 
 const router = createBrowserRouter([
   {
-    // path: "/",
-    index: true,
+    path: "/",
     element: <App />,
+    errorElement: <Error404 />,
   },
   {
     path: "get-started",
@@ -44,9 +49,23 @@ const router = createBrowserRouter([
     path: "home",
     element: (
       <ProtectedRoute>
-        <Home />
+        <HomeLayout />
       </ProtectedRoute>
     ),
+    children: [
+      {
+        index: true,
+        element: <Navigate to="/home/chats" />,
+      },
+      {
+        path: "chats",
+        element: <Chats />,
+      },
+      {
+        path: "people",
+        element: <People />,
+      },
+    ],
   },
   {
     path: "logout",
@@ -57,7 +76,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
-      <RouterProvider router={router} />
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </AuthProvider>
   </StrictMode>,
 );
