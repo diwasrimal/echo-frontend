@@ -1,24 +1,13 @@
-import DummyText from "@/components/DummyText";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import UserIcon from "@/components/UserIcon";
 import { OpenedChatProvider } from "@/contexts/OpenedChatContext";
-import useAutosizeTextArea from "@/hooks/useAutosizeTextArea";
-import useOpenedChat from "@/hooks/useOpenedChat";
 import {
   ArrowRightToLine,
   CircleUserRound,
-  EllipsisVertical,
-  File,
-  Image,
   MessageCircle,
-  Phone,
   Settings,
   UsersRound,
-  Video,
 } from "lucide-react";
-import { useRef, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
+import ChatArea from "./ChatArea";
 
 export default function HomeLayout() {
   return (
@@ -68,55 +57,5 @@ function NavBar() {
         </Link>
       </ul>
     </nav>
-  );
-}
-
-function ChatArea() {
-  const { partner: chatPartner } = useOpenedChat();
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [message, setMessage] = useState("");
-
-  useAutosizeTextArea(textareaRef.current, message);
-
-  if (chatPartner === null) {
-    return (
-      <div className="h-full flex justify-center items-center">
-        <h2 className="text-xl">No chat selected!</h2>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex flex-col h-full overflow-auto">
-      {/* Top title */}
-      <div className="flex-shrink-0 h-[60px] border-b flex justify-between items-center px-4">
-        <div className="flex gap-2 justify-center items-center">
-          <UserIcon user={chatPartner} />
-          <div className="font-bold text-lg">{chatPartner.fullname}</div>
-        </div>
-        <div className="flex gap-4 items-center justify-center">
-          <Phone className="cursor-pointer" />
-          <Video className="cursor-pointer" />
-          <EllipsisVertical className="cursor-pointer" />
-        </div>
-      </div>
-
-      {/* Messages */}
-      <div className="flex-grow overflow-scroll"></div>
-
-      {/* Text area */}
-      <div className="flex gap-2 items-center py-2 px-4 border-t">
-        <Image className="cursor-pointer" />
-        <File className="cursor-pointer" />
-        <Textarea
-          onChange={(e) => e.target && setMessage(e.target.value)}
-          rows={1}
-          placeholder="Enter message..."
-          className="flex-grow ml-2 max-h-[80px]"
-          ref={textareaRef}
-        />
-        <Button>Send</Button>
-      </div>
-    </div>
   );
 }
