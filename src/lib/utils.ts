@@ -25,7 +25,19 @@ export function cn(...inputs: ClassValue[]) {
 // }
 
 export async function makePayload(res: Response) {
-  return { ok: res.ok, statusCode: res.status, ...(await res.json()) };
+  return { ok: res.ok, status: res.status, ...(await res.json()) };
+}
+
+export async function fetchWithDelay(
+  delay: number,
+  input: string | URL | globalThis.Request,
+  init?: RequestInit,
+): Promise<Response> {
+  return new Promise<Response>((resolve, reject) => {
+    setTimeout(() => {
+      fetch(input, init).then(resolve).catch(reject);
+    }, delay);
+  });
 }
 
 // Formats date as one of the following by comparing today and given date
@@ -58,7 +70,7 @@ export function debounce<F extends (...args: any[]) => void>(
   func: F,
   delay: number,
 ) {
-  let timeoutId: number = 0;
+  let timeoutId: ReturnType<typeof setTimeout>;
   return function (...args: Parameters<F>) {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => func(...args), delay);
