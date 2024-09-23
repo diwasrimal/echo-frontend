@@ -40,7 +40,7 @@ function NavBar() {
   return (
     <nav className="flex flex-col justify-between px-2 h-full items-center py-4">
       <ul className="flex flex-col gap-4">
-        <Link to="/home/chats" title="Chats">
+        <Link to="/home/conversations" title="Chats">
           <MessageCircle />
         </Link>
         <Link to="/home/people" title="People">

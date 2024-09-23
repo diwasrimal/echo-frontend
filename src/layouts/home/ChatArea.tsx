@@ -8,7 +8,8 @@ import { useEffect, useRef, useState } from "react";
 import { Message, User } from "@/lib/types";
 import useAuth from "@/hooks/useAuth";
 import { SERVER_URL } from "@/lib/constants";
-import { makePayload } from "@/lib/utils";
+import { cn, makePayload } from "@/lib/utils";
+import ContentCenteredDiv from "@/components/ContentCenteredDiv";
 
 export default function ChatArea() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -68,13 +69,28 @@ function ChatMessages({ partner }: { partner: User }) {
   const { userId: ourId } = useAuth();
 
   useEffect(() => {
-    fetchChatMessages(ourId, partner.id)
-      .then((messages) => setMessages(messages))
-      .catch(console.error);
+    fetchChatMessages(ourId, partner.id).then(setMessages).catch(console.error);
   }, [partner]);
 
+  if (messages.length === 0) {
+    return <ContentCenteredDiv>No messages!</ContentCenteredDiv>;
+  }
+
   return (
-    <div className="h-full flex flex-col gap-3">{JSON.stringify(messages)}</div>
+    <div className="h-full flex flex-col gap-3 p-2">
+      {messages.map((msg) => (
+        <div
+          className={cn(
+            "p-2 flex max-w-[60%] items-center rounded",
+            msg.senderId === ourId
+              ? "border items-end self-end"
+              : "bg-secondary items-start self-start",
+          )}
+        >
+          {msg.text}
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -89,10 +105,6 @@ async function fetchChatMessages(
     if (useCache) {
       const data = sessionStorage.getItem(url);
       if (data !== null) {
-        console.log(
-          "Returning cached messages from session storage.",
-          new Date(),
-        );
         return resolve(JSON.parse(data) as Message[]);
       }
     }

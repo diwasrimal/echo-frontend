@@ -17,7 +17,7 @@ import useAuth from "./hooks/useAuth.tsx";
 import Home from "@/components/Home.tsx";
 import { ThemeProvider } from "./contexts/ThemeProvider.tsx";
 import HomeLayout from "./layouts/home/HomeLayout.tsx";
-import Chats from "./layouts/home/Chats.tsx";
+import Conversations from "./layouts/home/Conversations.tsx";
 import People from "./layouts/home/People.tsx";
 import Error404 from "./components/Error404.tsx";
 
@@ -55,11 +55,11 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to="/home/chats" />,
+        element: <Navigate to="/home/conversations" />,
       },
       {
-        path: "chats",
-        element: <Chats />,
+        path: "conversations",
+        element: <Conversations />,
       },
       {
         path: "people",
@@ -76,7 +76,7 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
-      <ThemeProvider>
+      <ThemeProvider defaultTheme="system">
         <RouterProvider router={router} />
       </ThemeProvider>
     </AuthProvider>
