@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { Message, User } from "@/lib/types";
 import useAuth from "@/hooks/useAuth";
 import { SERVER_URL } from "@/lib/constants";
-import { cn, makePayload } from "@/lib/utils";
+import { cn, formatChatDate, makePayload } from "@/lib/utils";
 import ContentCenteredDiv from "@/components/ContentCenteredDiv";
 
 export default function ChatArea() {
@@ -43,7 +43,7 @@ export default function ChatArea() {
       </div>
 
       {/* Messages */}
-      <div className="flex-grow overflow-scroll">
+      <div className="flex-grow overflow-auto">
         <ChatMessages partner={chatPartner} />
       </div>
 
@@ -69,7 +69,9 @@ function ChatMessages({ partner }: { partner: User }) {
   const { userId: ourId } = useAuth();
 
   useEffect(() => {
-    fetchChatMessages(ourId, partner.id).then(setMessages).catch(console.error);
+    fetchChatMessages(ourId, partner.id)
+      .then((msgs) => setMessages(msgs || []))
+      .catch(console.error);
   }, [partner]);
 
   if (messages.length === 0) {
@@ -77,19 +79,36 @@ function ChatMessages({ partner }: { partner: User }) {
   }
 
   return (
-    <div className="h-full flex flex-col gap-3 p-2">
-      {messages.map((msg) => (
-        <div
-          className={cn(
-            "p-2 flex max-w-[60%] items-center rounded",
-            msg.senderId === ourId
-              ? "border items-end self-end"
-              : "bg-secondary items-start self-start",
-          )}
-        >
-          {msg.text}
-        </div>
-      ))}
+    <div className="h-full flex flex-col-reverse overflow-scroll gap-1 p-2">
+      {messages.map((msg, i) => {
+        const showMsgTime = i > 0 && msg.senderId !== messages[i - 1].senderId;
+        const msgTime = formatChatDate(msg.timestamp);
+        return (
+          <div className="flex flex-col gap-1" key={msg.id}>
+            <div
+              className={cn(
+                "py-1 px-2 flex max-w-[60%] items-center rounded-md",
+                msg.senderId === ourId
+                  ? "border items-end self-end"
+                  : "bg-secondary items-start self-start",
+              )}
+              title={`${msg.senderId === ourId ? "Sent" : "Received"} on ${msgTime} `}
+            >
+              {msg.text}
+            </div>
+            {showMsgTime && (
+              <div
+                className={cn(
+                  "text-xs text-muted-foreground flex px-1 mb-2",
+                  msg.senderId === ourId ? "self-end" : "self-start",
+                )}
+              >
+                {msgTime}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

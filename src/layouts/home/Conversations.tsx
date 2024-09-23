@@ -12,7 +12,7 @@ export default function Conversations() {
   return (
     <div className="overflow-auto h-full flex flex-col">
       <div className="flex-shrink-0 h-[60px] flex items-center justify-center border-b p-2">
-        <h1 className="text-2xl font-bold">Chats</h1>
+        <h1 className="text-xl font-bold">Conversations</h1>
       </div>
       <ChatPartnersList />
     </div>
@@ -67,7 +67,7 @@ function ChatPartnersList() {
             <div>
               <UserIcon
                 user={partner}
-                className={isActive ? "bg-black" : "bg-secondary"}
+                className={isActive ? "bg-background" : "bg-secondary"}
               />
             </div>
             <div className="flex-grow">{partner.fullname}</div>
