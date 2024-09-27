@@ -73,7 +73,7 @@ export default function Login() {
       .finally(() => setRequesting(false));
   }
 
-  if (registered) return <Navigate to="/get-started/login" />;
+  if (registered) return <Navigate to="../login" />;
 
   return (
     <div className="w-full flex flex-col gap-2">

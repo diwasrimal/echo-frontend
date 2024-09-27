@@ -54,7 +54,7 @@ export default function Login() {
         if (payload.ok) {
           setLoggedIn(true);
           setUserId(payload.userId as number);
-          localStorage.setItem("jwt", payload.jwt)
+          localStorage.setItem("jwt", payload.jwt);
           // setJwt(payload.jwt);
         } else {
           setErr(payload.message);
@@ -126,7 +126,7 @@ export default function Login() {
       </Form>
       <div className="mt-2 text-sm">
         Don't have an account?{" "}
-        <Link to="/get-started/register" className="underline">
+        <Link to="../register" className="underline">
           Register
         </Link>
       </div>

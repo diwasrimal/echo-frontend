@@ -32,7 +32,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to="/get-started/login" />,
+        element: <Navigate to="./login" />,
       },
       {
         path: "login",
@@ -54,7 +54,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to="/home/conversations" />,
+        element: <Navigate to="./conversations" />,
       },
       {
         path: "conversations",
