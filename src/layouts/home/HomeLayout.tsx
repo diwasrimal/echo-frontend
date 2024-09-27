@@ -1,4 +1,4 @@
-import { OpenedChatProvider } from "@/contexts/OpenedChatContext";
+import { OpenedChatProvider } from "@/contexts/OpenedChatProvider";
 import {
   ArrowRightToLine,
   CircleUserRound,
@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 import { Link, Outlet } from "react-router-dom";
 import ChatArea from "./ChatArea";
+import WebsocketProvider from "@/contexts/WebsocketProvider";
+import UserIcon from "@/components/UserIcon";
 
 export default function HomeLayout() {
   return (
@@ -23,14 +25,16 @@ export default function HomeLayout() {
           </div>
         </div>
 
-        <OpenedChatProvider>
-          <div className="hidden sm:w-[200px] sm:block lg:w-[300px] flex-shrink-0 h-full border-l">
-            <Outlet />
-          </div>
-          <div className="flex-grow h-full border-l">
-            <ChatArea />
-          </div>
-        </OpenedChatProvider>
+        <WebsocketProvider>
+          <OpenedChatProvider>
+            <div className="hidden sm:w-[200px] sm:block lg:w-[300px] flex-shrink-0 h-full border-l">
+              <Outlet />
+            </div>
+            <div className="flex-grow h-full border-l">
+              <ChatArea />
+            </div>
+          </OpenedChatProvider>
+        </WebsocketProvider>
       </div>
     </div>
   );

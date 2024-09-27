@@ -38,9 +38,6 @@ export default function AuthProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
-    console.log(
-      `AuthContext inside useEffect(): checking: ${checking}, loggedIn: ${loggedIn}, userId: ${userId}, jwt: ${jwt}`,
-    );
 
     if (!jwt) {
       setChecking(false);

@@ -2,11 +2,10 @@ import ContentCenteredDiv from "@/components/ContentCenteredDiv";
 import useOpenedChat from "@/hooks/useOpenedChat";
 import { SERVER_URL } from "@/lib/constants";
 import { User } from "@/lib/types";
-import { cn, fetchWithDelay, makePayload } from "@/lib/utils";
+import { cn, makePayload } from "@/lib/utils";
 import { Navigate } from "react-router-dom";
 import UserIcon from "@/components/UserIcon";
 import { useState, useEffect } from "react";
-import DummyText from "@/components/DummyText";
 
 export default function Conversations() {
   return (

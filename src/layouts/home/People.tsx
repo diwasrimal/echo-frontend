@@ -8,14 +8,10 @@ import UserIcon from "@/components/UserIcon";
 import { useState, useEffect, useMemo, ComponentProps } from "react";
 import DummyText from "@/components/DummyText";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   ArrowLeft,
   ArrowRight,
-  Divide,
   MessageCircleMore,
-  MessageSquareText,
-  Search,
   UserRoundPlus,
 } from "lucide-react";
 import useAuth from "@/hooks/useAuth";
@@ -98,7 +94,7 @@ function SearchResults({ results }: { results: User[] }) {
         return (
           <li
             key={user.id}
-            className="p-4 flex items-center gap-2 hover:bg-secondary cursor-pointer border rounded-md transition-colors"
+            className="p-4 flex items-center gap-2 cursor-pointer border rounded-md transition-colors"
             // onClick={() => setActiveChatPartner(user)}
           >
             <div>
@@ -107,10 +103,7 @@ function SearchResults({ results }: { results: User[] }) {
                 className={isActive ? "bg-background" : "bg-secondary"}
               />
             </div>
-            <div className="flex-grow">
-              {user.fullname}
-              <DummyText />
-            </div>
+            <div className="flex-grow hover:underline">{user.fullname}</div>
             {user.id !== ourId && <UserActions targetUser={user} />}
           </li>
         );

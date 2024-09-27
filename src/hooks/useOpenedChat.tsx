@@ -1,4 +1,4 @@
-import { OpenedChatContext } from "@/contexts/OpenedChatContext";
+import { OpenedChatContext } from "@/contexts/OpenedChatProvider";
 import { useContext } from "react";
 
 export default function useOpenedChat() {
