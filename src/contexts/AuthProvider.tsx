@@ -55,6 +55,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
           setLoggedIn(true);
           setUserId(payload.userId);
         } else {
+          localStorage.clear(); // jwt was invalid or expired, we clear other data (since they are also invalid now)
           throw new Error(
             `Authorization check failed: ${payload.message || "Unknown error"}`,
           );
