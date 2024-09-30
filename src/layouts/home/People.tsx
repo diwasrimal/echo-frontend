@@ -1,4 +1,13 @@
 import ContentCenteredDiv from "@/components/ContentCenteredDiv";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 import useOpenedChat from "@/hooks/useOpenedChat";
 import { SERVER_URL } from "@/lib/constants";
 import { User } from "@/lib/types";
@@ -11,8 +20,13 @@ import { Input } from "@/components/ui/input";
 import {
   ArrowLeft,
   ArrowRight,
+  Check,
   MessageCircleMore,
+  Terminal,
+  UserRound,
   UserRoundPlus,
+  UserRoundX,
+  X,
 } from "lucide-react";
 import useAuth from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -21,6 +35,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
+import {
+  UserRoundArrowLeft,
+  UserRoundXArrowRight,
+} from "@/components/CustomIcons";
+import { Toast } from "@/components/ui/toast";
+import { toast } from "@/hooks/use-toast";
 
 export default function People() {
   // const [input, setInput] = useState<string>("");
@@ -84,13 +106,10 @@ export default function People() {
 
 function SearchResults({ results }: { results: User[] }) {
   const { userId: ourId } = useAuth();
-  const { partner: activeChatPartner, setPartner: setActiveChatPartner } =
-    useOpenedChat();
 
   return (
     <ul className="flex-grow overflow-scroll w-full px-2 py-4 flex flex-col gap-2">
       {results.map((user) => {
-        const isActive = user.id === activeChatPartner?.id;
         return (
           <li
             key={user.id}
@@ -98,10 +117,7 @@ function SearchResults({ results }: { results: User[] }) {
             // onClick={() => setActiveChatPartner(user)}
           >
             <div>
-              <UserIcon
-                user={user}
-                className={isActive ? "bg-background" : "bg-secondary"}
-              />
+              <UserIcon user={user} />
             </div>
             <div className="flex-grow hover:underline">{user.fullname}</div>
             {user.id !== ourId && <UserActions targetUser={user} />}
@@ -119,11 +135,13 @@ function UserActions({
   className,
   ...rest
 }: { targetUser: User } & ComponentProps<"div">) {
-  const [loading, setLoading] = useState(true);
   const [friendshipStatus, setFriendshipStatus] = useState("");
+  const { setPartner: setChatPartner } = useOpenedChat();
+  const [actionProcessing, setActionProcessing] = useState(false);
 
-  useEffect(() => {
-    setLoading(true);
+  useEffect(updateFriendshipStatus, [targetUser]);
+
+  function updateFriendshipStatus() {
     const url = `${SERVER_URL}/api/friendship-status/${targetUser.id}`;
     fetch(url, {
       method: "GET",
@@ -142,9 +160,8 @@ function UserActions({
           throw payload.message || "Unknown error occurred";
         }
       })
-      .catch((err) => console.error(`Error fetching ${url}: ${err}`))
-      .finally(() => setLoading(false));
-  }, [targetUser]);
+      .catch((err) => console.error(`Error fetching ${url}: ${err}`));
+  }
 
   const btnClass = "flex gap-1 px-2 py-1 items-center text-sm";
   const iconSize = 20;
@@ -154,30 +171,284 @@ function UserActions({
       className={cn("flex gap-2 items-center justify-center", className)}
       {...rest}
     >
+      {friendshipStatus === "unknown" && (
+        // <SendRequestButton
+        //   targetUser={targetUser}
+        //   className={btnClass}
+        //   successFunc={updateFriendshipStatus}
+        // >
+        <Button
+          variant="outline"
+          className={btnClass}
+          title="Send Request"
+          onClick={() => {
+            setActionProcessing(true);
+            sendFriendRequest(targetUser)
+              .then(() => {
+                toast({
+                  title: "Request Sent",
+                  description: `Friend request sent to ${targetUser.fullname}.`,
+                });
+                updateFriendshipStatus();
+              })
+              .catch(console.error)
+              .finally(() => setActionProcessing(false));
+          }}
+        >
+          {actionProcessing ? (
+            <LoadingSpinner />
+          ) : (
+            <UserRoundPlus size={iconSize} />
+          )}
+        </Button>
+        // </SendRequestButton>
+      )}
       {friendshipStatus === "friends" && (
-        <Button variant="outline" className={btnClass} title="Chat">
+        <Button
+          variant="outline"
+          className={btnClass}
+          title="Chat"
+          onClick={() => setChatPartner(targetUser)}
+        >
           <MessageCircleMore size={iconSize} />
-          {/* Message */}
         </Button>
       )}
       {friendshipStatus === "req-sent" && (
-        <Button variant="outline" className={btnClass} title="Requested">
-          <ArrowRight size={iconSize} />
-          {/* Requested */}
+        // <RequestCancelButton
+        //   targetUser={targetUser}
+        //   successFunc={updateFriendshipStatus}
+        // >
+        //   Cancel Request
+        // </RequestCancelButton>
+        <Button
+          variant="outline"
+          className={btnClass}
+          title="Cancel Request"
+          onClick={() => {
+            setActionProcessing(true);
+            cancelFriendRequest(targetUser)
+              .then(() => {
+                toast({
+                  title: "Request Canceled",
+                  description: `Your friend request to ${targetUser.fullname} has been canceled.`,
+                });
+                updateFriendshipStatus();
+              })
+              .catch(console.error)
+              .finally(() => setActionProcessing(false));
+          }}
+        >
+          {actionProcessing ? (
+            <LoadingSpinner />
+          ) : (
+            <UserRoundXArrowRight size={iconSize} />
+          )}
         </Button>
       )}
       {friendshipStatus === "req-received" && (
-        <Button variant="outline" className={btnClass} title="Incoming request">
-          <ArrowLeft size={iconSize} />
-          {/* Incoming Request */}
-        </Button>
-      )}
-      {friendshipStatus === "unknown" && (
-        <Button variant="outline" className={btnClass} title="Send Request">
-          <UserRoundPlus size={iconSize} />
-          {/* Add */}
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              className={btnClass}
+              title="Incoming request"
+            >
+              <UserRoundArrowLeft size={iconSize} />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem
+              onClick={() =>
+                acceptFriendRequest(targetUser)
+                  .then(updateFriendshipStatus)
+                  .catch(console.error)
+              }
+            >
+              <div className="flex gap-1">
+                <Check size={20} />
+                Accept
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() =>
+                declineFriendRequest(targetUser)
+                  .then(updateFriendshipStatus)
+                  .catch(console.error)
+              }
+            >
+              <div className="flex gap-1">
+                <X size={20} />
+                Decline
+              </div>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       )}
     </div>
+  );
+}
+
+function acceptFriendRequest(targetUser: User): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    const url = `${SERVER_URL}/api/friends`;
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      },
+      body: JSON.stringify({ targetId: targetUser.id }),
+    })
+      .then((res) => makePayload(res))
+      .then((payload) => {
+        if (payload.ok) {
+          resolve();
+        } else {
+          throw payload.message || "Unknown error occured";
+        }
+      })
+      .catch((err) => reject(`error fetching ${url}: ${err}`));
+  });
+}
+
+function declineFriendRequest(targetUser: User): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    reject("TODO: implement decline request");
+  });
+}
+
+function sendFriendRequest(targetUser: User): Promise<void> {
+  const url = `${SERVER_URL}/api/friend-requests`;
+  return new Promise<void>((resolve, reject) => {
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      },
+      body: JSON.stringify({ targetId: targetUser.id }),
+    })
+      .then((res) => makePayload(res))
+      .then((payload) => {
+        if (payload.ok) {
+          resolve();
+        } else {
+          throw payload.message || "Unknown error occurred!";
+        }
+      })
+      .catch((err) => reject(`Error fetching ${url}: ${err}`));
+  });
+}
+
+function cancelFriendRequest(targetUser: User): Promise<void> {
+  const url = `${SERVER_URL}/api/friend-requests`;
+  return new Promise<void>((resolve, reject) => {
+    fetch(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      },
+      body: JSON.stringify({ targetId: targetUser.id }),
+    })
+      .then((res) => makePayload(res))
+      .then((payload) => {
+        if (payload.ok) {
+          resolve();
+        } else {
+          throw payload.message || "Unknown error occurred!";
+        }
+      })
+      .catch((err) => reject(`Error fetching ${url}: ${err}`));
+  });
+}
+
+function SendRequestButton({
+  targetUser,
+  className,
+  children,
+  successFunc,
+  ...rest
+}: { targetUser: User; successFunc: () => void } & ComponentProps<"button">) {
+  const [processing, setProcessing] = useState(false);
+
+  function sendRequest() {
+    setProcessing(true);
+    const url = `${SERVER_URL}/api/friend-requests`;
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      },
+      body: JSON.stringify({ targetId: targetUser.id }),
+    })
+      .then((res) => makePayload(res))
+      .then((payload) => {
+        if (payload.ok) {
+          successFunc();
+        } else {
+          throw payload.message || "Unknown error occurred!";
+        }
+      })
+      .catch((err) => console.error(`Error fetching ${url}:`, err))
+      .finally(() => setProcessing(false));
+  }
+
+  return (
+    <Button
+      variant="outline"
+      className={className}
+      title="Send Request"
+      onClick={sendRequest}
+      {...rest}
+    >
+      {processing ? <LoadingSpinner /> : children}
+    </Button>
+  );
+}
+
+function RequestCancelButton({
+  targetUser,
+  className,
+  children,
+  successFunc,
+  ...rest
+}: { targetUser: User; successFunc: () => void } & ComponentProps<"button">) {
+  const [processing, setProcessing] = useState(false);
+
+  function cancelRequest() {
+    setProcessing(true);
+    const url = `${SERVER_URL}/api/friend-requests`;
+    fetch(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      },
+      body: JSON.stringify({ targetId: targetUser.id }),
+    })
+      .then((res) => makePayload(res))
+      .then((payload) => {
+        if (payload.ok) {
+          successFunc();
+        } else {
+          throw payload.message || "Unknown error occurred!";
+        }
+      })
+      .catch((err) => console.error(`Error fetching ${url}:`, err))
+      .finally(() => setProcessing(false));
+  }
+
+  return (
+    <Button
+      variant="outline"
+      className={className}
+      title="Cancel Request"
+      onClick={cancelRequest}
+      {...rest}
+    >
+      {processing ? <LoadingSpinner /> : children}
+    </Button>
   );
 }

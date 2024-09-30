@@ -4,22 +4,16 @@ import useAutosizeTextArea from "@/hooks/useAutosizeTextArea";
 import useOpenedChat from "@/hooks/useOpenedChat";
 import { Phone, Video, EllipsisVertical, Image, File } from "lucide-react";
 import UserIcon from "@/components/UserIcon";
-import { useEffect, useRef, useState } from "react";
+import { ComponentProps, useEffect, useRef, useState } from "react";
 import { Message, User } from "@/lib/types";
 import useAuth from "@/hooks/useAuth";
-import { SERVER_URL } from "@/lib/constants";
-import { cn, formatChatDate, makePayload } from "@/lib/utils";
+import { cn, formatChatDate } from "@/lib/utils";
 import ContentCenteredDiv from "@/components/ContentCenteredDiv";
 import useWebsocket from "@/hooks/useWebsocket";
+import { fetchChatMessages } from "@/lib/fetchers";
 
 export default function ChatArea() {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [message, setMessage] = useState("");
-
-  useAutosizeTextArea(textareaRef.current, message);
-
   const { partner: chatPartner } = useOpenedChat();
-  const { alive: wsAlive, sendData: wsSendData } = useWebsocket();
 
   if (chatPartner === null) {
     return (
@@ -27,35 +21,6 @@ export default function ChatArea() {
         <h2 className="text-xl">No chat selected!</h2>
       </div>
     );
-  }
-
-  function sendMessageOnEnterKey(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  }
-
-  function sendMessage() {
-    const text = message.trim();
-    if (!text) return;
-    if (!wsAlive) {
-      console.error("Cannot send message, websocket connection not alive!");
-      return;
-    }
-    wsSendData(
-      JSON.stringify({
-        msgType: "chatMsgSend",
-        msgData: {
-          receiverId: chatPartner.id,
-          text: text,
-          timestamp: new Date().toISOString(),
-        },
-      }),
-    );
-    console.log("Sending message", text, "to", chatPartner.username);
-    textareaRef.current!.value = "";
-    setMessage("");
   }
 
   return (
@@ -78,20 +43,71 @@ export default function ChatArea() {
         <ChatMessages partner={chatPartner} />
       </div>
 
-      {/* Text area */}
-      <div className="flex gap-2 items-center py-2 px-4 border-t">
-        <Image className="cursor-pointer" />
-        <File className="cursor-pointer" />
-        <Textarea
-          onChange={(e) => e.target && setMessage(e.target.value)}
-          onKeyDown={sendMessageOnEnterKey}
-          rows={1}
-          placeholder="Enter message..."
-          className="flex-grow ml-2 max-h-[80px]"
-          ref={textareaRef}
-        />
-        <Button onClick={sendMessage}>Send</Button>
+      {/* Input area */}
+      <div className="py-2 px-4 border-t">
+        <MessageInputBox key={chatPartner.id} partner={chatPartner} />
       </div>
+    </div>
+  );
+}
+
+function MessageInputBox({
+  partner: chatPartner,
+}: { partner: User } & ComponentProps<"div">) {
+  const [text, setText] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useAutosizeTextArea(textareaRef.current, text);
+
+  const { alive: wsAlive, sendData: wsSendData } = useWebsocket();
+
+  function sendMessage() {
+    const txt = text.trim();
+    if (!txt) return;
+    if (!wsAlive) {
+      console.error("Cannot send message, websocket connection not alive!");
+      return;
+    }
+    try {
+      console.log("Sending message", txt, "to", chatPartner.username);
+      wsSendData(
+        JSON.stringify({
+          msgType: "chatMsgSend",
+          msgData: {
+            receiverId: chatPartner.id,
+            text: txt,
+            timestamp: new Date().toISOString(),
+          },
+        }),
+      );
+      setText("");
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function sendMessageOnEnterKey(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      console.log("hERE");
+      sendMessage();
+    }
+  }
+
+  return (
+    <div className="w-full h-full flex gap-2 items-center">
+      <Image className="cursor-pointer" />
+      <File className="cursor-pointer" />
+      <Textarea
+        onChange={(e) => e.target && setText(e.target.value)}
+        value={text}
+        onKeyDown={sendMessageOnEnterKey}
+        rows={1}
+        placeholder="Enter message..."
+        className="flex-grow ml-2 max-h-[80px]"
+        ref={textareaRef}
+      />
+      <Button onClick={sendMessage}>Send</Button>
     </div>
   );
 }
@@ -103,9 +119,7 @@ function ChatMessages({ partner }: { partner: User }) {
   const { data: wsData } = useWebsocket();
 
   useEffect(() => {
-    fetchChatMessages(ourId, partner.id)
-      .then((msgs) => setMessages(msgs || []))
-      .catch(console.error);
+    fetchChatMessages(ourId, partner.id).then(setMessages).catch(console.error);
   }, [partner]);
 
   // Update messages state and sessionStorage when message is recieved via ws
@@ -155,40 +169,4 @@ function ChatMessages({ partner }: { partner: User }) {
       })}
     </div>
   );
-}
-
-async function fetchChatMessages(
-  ourId: number,
-  partnerId: number,
-  useCache: boolean = true,
-): Promise<Message[]> {
-  const url = `${SERVER_URL}/api/messages/${partnerId}`;
-  const storageKey = `messages-${partnerId}`;
-
-  return new Promise<Message[]>((resolve, reject) => {
-    if (useCache) {
-      const data = sessionStorage.getItem(storageKey);
-      if (data !== null) {
-        console.log(`Resolved ${url} from sessionStorage`);
-        return resolve(JSON.parse(data) as Message[]);
-      }
-    }
-
-    fetch(url, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
-    })
-      .then((res) => makePayload(res))
-      .then((payload) => {
-        if (payload.ok) {
-          console.log(`Fetched ${url} from server`);
-          const msgs = payload.messages as Message[];
-          sessionStorage.setItem(storageKey, JSON.stringify(msgs));
-          resolve(msgs);
-        } else {
-          throw payload.message || "Unknown error occurred"; // this one is error message
-        }
-      })
-      .catch((err) => reject(`Error fetching ${url}: ${err}`));
-  });
 }

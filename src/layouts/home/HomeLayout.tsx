@@ -4,12 +4,19 @@ import {
   CircleUserRound,
   MessageCircle,
   Settings,
+  UserRoundSearch,
   UsersRound,
 } from "lucide-react";
 import { Link, Outlet } from "react-router-dom";
 import ChatArea from "./ChatArea";
 import WebsocketProvider from "@/contexts/WebsocketProvider";
 import UserIcon from "@/components/UserIcon";
+import { useEffect, useState } from "react";
+import { fetchUser } from "@/lib/fetchers";
+import useAuth from "@/hooks/useAuth";
+import { User } from "@/lib/types";
+import { Toaster } from "@/components/ui/toaster";
+import { ModeToggle } from "@/components/ui/mode-toggle";
 
 export default function HomeLayout() {
   return (
@@ -36,11 +43,19 @@ export default function HomeLayout() {
           </OpenedChatProvider>
         </WebsocketProvider>
       </div>
+      <Toaster />
     </div>
   );
 }
 
 function NavBar() {
+  const [user, setUser] = useState<User>();
+  const { userId } = useAuth();
+
+  useEffect(() => {
+    fetchUser(userId).then(setUser).catch(console.error);
+  }, [userId]);
+
   return (
     <nav className="flex flex-col justify-between px-2 h-full items-center py-4">
       <ul className="flex flex-col gap-4">
@@ -48,14 +63,19 @@ function NavBar() {
           <MessageCircle />
         </Link>
         <Link to="/home/people" title="People">
-          <UsersRound />
+          <UserRoundSearch />
         </Link>
       </ul>
-      <ul className="flex flex-col gap-4">
-        <CircleUserRound />
-        <Link to="/settings" title="Settings">
+      <ul className="flex flex-col gap-4 items-center">
+        <div className="cursor-pointer">
+          {user ? <UserIcon user={user} /> : <CircleUserRound />}
+        </div>
+        <div title="Theme">
+          <ModeToggle />
+        </div>
+        {/* <Link to="/settings" title="Settings">
           <Settings />
-        </Link>
+        </Link> */}
         <Link to="/logout" title="Logout">
           <ArrowRightToLine />
         </Link>
