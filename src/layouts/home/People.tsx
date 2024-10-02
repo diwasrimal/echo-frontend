@@ -107,7 +107,7 @@ function SearchResults({ results }: { results: User[] }) {
   const { userId: ourId } = useAuth();
 
   return (
-    <ul className="flex-grow overflow-scroll w-full px-2 py-4 flex flex-col gap-2">
+    <ul className="flex-grow overflow-auto w-full px-2 py-4 flex flex-col gap-2">
       {results.map((user) => {
         return (
           <li

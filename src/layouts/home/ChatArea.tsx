@@ -88,7 +88,7 @@ function ChatMessages({ partner }: { partner: User }) {
   }
 
   return (
-    <div className="h-full flex flex-col-reverse overflow-scroll gap-1 p-2">
+    <div className="h-full flex flex-col-reverse overflow-auto gap-1 p-2">
       {messages.map((msg, i) => {
         const showMsgTime = i > 0 && msg.senderId !== messages[i - 1].senderId;
         const msgTime = formatChatDate(msg.timestamp);
