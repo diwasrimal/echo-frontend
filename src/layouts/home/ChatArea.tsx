@@ -1,19 +1,15 @@
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import useAutosizeTextArea from "@/hooks/useAutosizeTextArea";
-import useOpenedChat from "@/hooks/useOpenedChat";
-import { Phone, Video, EllipsisVertical, Image, File } from "lucide-react";
-import UserIcon from "@/components/UserIcon";
-import { ComponentProps, useEffect, useRef, useState } from "react";
-import { Message, User } from "@/lib/types";
-import useAuth from "@/hooks/useAuth";
-import { cn, formatChatDate } from "@/lib/utils";
 import ContentCenteredDiv from "@/components/ContentCenteredDiv";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
+import MessageInputBox from "@/components/MessageInputBox";
+import UserIcon from "@/components/UserIcon";
+import useAuth from "@/hooks/useAuth";
+import useOpenedChat from "@/hooks/useOpenedChat";
 import useWebsocket from "@/hooks/useWebsocket";
 import { fetchChatMessages } from "@/lib/fetchers";
-import { useForm } from "react-hook-form";
-import MessageInputBox from "@/components/MessageInputBox";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { Message, User } from "@/lib/types";
+import { cn, formatChatDate } from "@/lib/utils";
+import { EllipsisVertical, Phone, Video } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function ChatArea() {
   const { partner: chatPartner } = useOpenedChat();

@@ -1,22 +1,20 @@
+import { ModeToggle } from "@/components/ui/mode-toggle";
+import { Toaster } from "@/components/ui/toaster";
+import UserIcon from "@/components/UserIcon";
 import { OpenedChatProvider } from "@/contexts/OpenedChatProvider";
+import WebsocketProvider from "@/contexts/WebsocketProvider";
+import useAuth from "@/hooks/useAuth";
+import { fetchUser } from "@/lib/fetchers";
+import { User } from "@/lib/types";
 import {
   ArrowRightToLine,
   CircleUserRound,
   MessageCircle,
-  Settings,
   UserRoundSearch,
-  UsersRound,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import ChatArea from "./ChatArea";
-import WebsocketProvider from "@/contexts/WebsocketProvider";
-import UserIcon from "@/components/UserIcon";
-import { useEffect, useState } from "react";
-import { fetchUser } from "@/lib/fetchers";
-import useAuth from "@/hooks/useAuth";
-import { User } from "@/lib/types";
-import { Toaster } from "@/components/ui/toaster";
-import { ModeToggle } from "@/components/ui/mode-toggle";
 
 export default function HomeLayout() {
   return (

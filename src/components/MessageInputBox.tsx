@@ -1,10 +1,10 @@
 import useAutosizeTextArea from "@/hooks/useAutosizeTextArea";
 import useWebsocket from "@/hooks/useWebsocket";
 import { User } from "@/lib/types";
-import { ComponentProps, useState, useRef, useEffect } from "react";
+import { File, Image } from "lucide-react";
+import { ComponentProps, useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
-import { Image, File } from "lucide-react";
 
 export default function MessageInputBox({
   partner: chatPartner,

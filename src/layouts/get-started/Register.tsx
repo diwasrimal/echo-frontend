@@ -1,10 +1,4 @@
-import { createElement, useState } from "react";
-import useAuth from "@/hooks/useAuth";
-import { SERVER_URL } from "@/lib/constants";
-import { makePayload } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,10 +10,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Link, Navigate } from "react-router-dom";
+import { SERVER_URL } from "@/lib/constants";
 import { registerSchema } from "@/lib/schema";
+import { makePayload } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { createElement, useState } from "react";
+import { useForm } from "react-hook-form";
+import { Link, Navigate } from "react-router-dom";
+import { z } from "zod";
 
 const formSchema = z
   .object({
