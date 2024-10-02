@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Link, Navigate } from "react-router-dom";
 import { loginSchema } from "@/lib/schema";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 
 const formSchema = z.object({
   username: loginSchema.username,
@@ -119,7 +120,8 @@ export default function Login() {
           />
 
           <FormMessage>{err}</FormMessage>
-          <Button disabled={requesting} type="submit">
+          <Button disabled={requesting} type="submit" className="flex gap-2">
+            {requesting && <LoadingSpinner />}
             Login
           </Button>
         </form>

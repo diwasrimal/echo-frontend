@@ -6,6 +6,7 @@ import { cn, makePayload } from "@/lib/utils";
 import { Navigate } from "react-router-dom";
 import UserIcon from "@/components/UserIcon";
 import { useState, useEffect } from "react";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 
 export default function Conversations() {
   return (
@@ -48,7 +49,12 @@ function ChatPartnersList() {
   }, []);
 
   if (unauthorized) return <Navigate to="/get-started" />;
-  if (loading) return <ContentCenteredDiv>Loading...</ContentCenteredDiv>;
+  if (loading)
+    return (
+      <ContentCenteredDiv className="gap-2 ">
+        <LoadingSpinner /> Loading...
+      </ContentCenteredDiv>
+    );
 
   return (
     <ul className="flex-grow overflow-scroll w-full px-2 py-4 flex flex-col gap-2">

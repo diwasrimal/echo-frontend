@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { ComponentProps } from "react";
 
 export function LoadingSpinner({
-  size = 24,
+  size = 20,
   className,
   ...props
 }: { size?: number } & ComponentProps<"svg">) {

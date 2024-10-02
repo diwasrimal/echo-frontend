@@ -3,51 +3,38 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import useOpenedChat from "@/hooks/useOpenedChat";
-import { SERVER_URL } from "@/lib/constants";
-import { User } from "@/lib/types";
-import { cn, debounce, makePayload } from "@/lib/utils";
-import { Navigate } from "react-router-dom";
-import UserIcon from "@/components/UserIcon";
-import { useState, useEffect, useMemo, ComponentProps } from "react";
-import DummyText from "@/components/DummyText";
-import { Input } from "@/components/ui/input";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  MessageCircleMore,
-  Terminal,
-  UserRound,
-  UserRoundPlus,
-  UserRoundX,
-  X,
-} from "lucide-react";
-import useAuth from "@/hooks/useAuth";
-import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
 import {
   UserRoundArrowLeft,
   UserRoundXArrowRight,
 } from "@/components/CustomIcons";
-import { Toast } from "@/components/ui/toast";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import UserIcon from "@/components/UserIcon";
 import { toast } from "@/hooks/use-toast";
+import useAuth from "@/hooks/useAuth";
+import useOpenedChat from "@/hooks/useOpenedChat";
+import { SERVER_URL } from "@/lib/constants";
+import { User } from "@/lib/types";
+import { cn, debounce, makePayload } from "@/lib/utils";
+import {
+  Check,
+  MessageCircleMore,
+  Search,
+  UserRoundPlus,
+  X,
+} from "lucide-react";
+import { ComponentProps, useEffect, useMemo, useState } from "react";
+import { Navigate } from "react-router-dom";
 
 export default function People() {
   // const [input, setInput] = useState<string>("");
   const [results, setResults] = useState<User[]>([]);
   const [unauthorized, setUnauthorized] = useState(false);
+  const [searching, setSearching] = useState(false);
 
   const searchUser = useMemo(() => {
     return debounce((query: string) => {
@@ -56,7 +43,7 @@ export default function People() {
         ["type", "normal"],
         ["query", query],
       ]);
-      // setLoading(true);
+      setSearching(true);
       const url = `${SERVER_URL}/api/search?${params}`;
       fetch(url, {
         method: "GET",
@@ -72,8 +59,8 @@ export default function People() {
             throw new Error(payload.message || "Unknown error");
           }
         })
-        .catch((err) => console.log(`Error fetching ${url}: ${err}`));
-      // .finally(() => setLoading(false));
+        .catch((err) => console.log(`Error fetching ${url}: ${err}`))
+        .finally(() => setSearching(false));
     }, 250);
   }, []);
 
@@ -85,16 +72,28 @@ export default function People() {
         <h1 className="text-xl font-bold">People</h1>
       </div>
       <div className="px-2 py-4">
-        <Input
-          placeholder="Find people..."
-          onChange={(e) => {
-            const query = e.target.value.trim();
-            if (query.length > 0) {
-              searchUser(query);
-            }
-          }}
-        />
+        <div className="relative">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-2">
+            <Search size={20} />
+          </span>
+          <Input
+            className="pl-8 pr-8"
+            placeholder="Find people..."
+            onChange={(e) => {
+              const query = e.target.value.trim();
+              if (query.length > 0) {
+                searchUser(query);
+              }
+            }}
+          />
+          {searching && (
+            <span className="absolute inset-y-0 right-0 flex items-center pr-2">
+              <LoadingSpinner />
+            </span>
+          )}
+        </div>
       </div>
+
       {results.length > 0 ? (
         <SearchResults results={results} />
       ) : (

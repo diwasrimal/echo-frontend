@@ -13,6 +13,7 @@ import useWebsocket from "@/hooks/useWebsocket";
 import { fetchChatMessages } from "@/lib/fetchers";
 import { useForm } from "react-hook-form";
 import MessageInputBox from "@/components/MessageInputBox";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 
 export default function ChatArea() {
   const { partner: chatPartner } = useOpenedChat();
@@ -55,12 +56,17 @@ export default function ChatArea() {
 
 function ChatMessages({ partner }: { partner: User }) {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [fetching, setFetching] = useState(true);
   const { userId: ourId } = useAuth();
 
   const { data: wsData } = useWebsocket();
 
   useEffect(() => {
-    fetchChatMessages(ourId, partner.id).then(setMessages).catch(console.error);
+    setFetching(true);
+    fetchChatMessages(ourId, partner.id)
+      .then(setMessages)
+      .catch(console.error)
+      .finally(() => setFetching(false));
   }, [partner]);
 
   // Update messages state and sessionStorage when message is recieved via ws
@@ -72,6 +78,14 @@ function ChatMessages({ partner }: { partner: User }) {
       sessionStorage.setItem(`messages-${partner.id}`, JSON.stringify(newList));
     }
   }, [wsData]);
+
+  if (fetching) {
+    return (
+      <ContentCenteredDiv className="gap-2 ">
+        <LoadingSpinner /> Loading...
+      </ContentCenteredDiv>
+    );
+  }
 
   if (messages.length === 0) {
     return <ContentCenteredDiv>No messages!</ContentCenteredDiv>;
