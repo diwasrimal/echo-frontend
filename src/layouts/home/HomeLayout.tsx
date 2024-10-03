@@ -1,7 +1,6 @@
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Toaster } from "@/components/ui/toaster";
 import UserIcon from "@/components/UserIcon";
-import { OpenedChatProvider } from "@/contexts/OpenedChatProvider";
 import WebsocketProvider from "@/contexts/WebsocketProvider";
 import useAuth from "@/hooks/useAuth";
 import { fetchUser } from "@/lib/fetchers";
@@ -15,6 +14,7 @@ import {
 import { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import ChatArea from "./ChatArea";
+import ChatPartnersProvider from "@/contexts/ChatPartnersProvider";
 
 export default function HomeLayout() {
   return (
@@ -31,14 +31,14 @@ export default function HomeLayout() {
         </div>
 
         <WebsocketProvider>
-          <OpenedChatProvider>
+          <ChatPartnersProvider>
             <div className="hidden sm:w-[200px] sm:block lg:w-[300px] flex-shrink-0 h-full border-l">
               <Outlet />
             </div>
             <div className="flex-grow h-full border-l">
               <ChatArea />
             </div>
-          </OpenedChatProvider>
+          </ChatPartnersProvider>
         </WebsocketProvider>
       </div>
       <Toaster />

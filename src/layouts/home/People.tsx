@@ -16,7 +16,6 @@ import { Input } from "@/components/ui/input";
 import UserIcon from "@/components/UserIcon";
 import { toast } from "@/hooks/use-toast";
 import useAuth from "@/hooks/useAuth";
-import useOpenedChat from "@/hooks/useOpenedChat";
 import { SERVER_URL } from "@/lib/constants";
 import { User } from "@/lib/types";
 import { cn, debounce, makePayload } from "@/lib/utils";
@@ -29,6 +28,7 @@ import {
 } from "lucide-react";
 import { ComponentProps, useEffect, useMemo, useState } from "react";
 import { Navigate } from "react-router-dom";
+import useChatPartners from "@/hooks/useChatPartners";
 
 export default function People() {
   // const [input, setInput] = useState<string>("");
@@ -113,7 +113,6 @@ function SearchResults({ results }: { results: User[] }) {
           <li
             key={user.id}
             className="p-4 flex items-center gap-2 cursor-pointer border rounded-md transition-colors"
-            // onClick={() => setActiveChatPartner(user)}
           >
             <div>
               <UserIcon user={user} />
@@ -135,7 +134,7 @@ function UserActions({
   ...rest
 }: { targetUser: User } & ComponentProps<"div">) {
   const [friendshipStatus, setFriendshipStatus] = useState("");
-  const { setPartner: setChatPartner } = useOpenedChat();
+  const { setActivePartner: setActiveChatPartner } = useChatPartners();
   const [actionProcessing, setActionProcessing] = useState(false);
 
   useEffect(updateFriendshipStatus, [targetUser]);
@@ -207,7 +206,7 @@ function UserActions({
           variant="outline"
           className={btnClass}
           title="Chat"
-          onClick={() => setChatPartner(targetUser)}
+          onClick={() => setActiveChatPartner(targetUser)}
         >
           <MessageCircleMore size={iconSize} />
         </Button>

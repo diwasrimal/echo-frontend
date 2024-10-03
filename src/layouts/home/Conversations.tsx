@@ -1,12 +1,15 @@
 import ContentCenteredDiv from "@/components/ContentCenteredDiv";
-import useOpenedChat from "@/hooks/useOpenedChat";
+import useChatPartners from "@/hooks/useChatPartners";
 import { SERVER_URL } from "@/lib/constants";
-import { User } from "@/lib/types";
+import { Message, User } from "@/lib/types";
 import { cn, makePayload } from "@/lib/utils";
 import { Navigate } from "react-router-dom";
 import UserIcon from "@/components/UserIcon";
 import { useState, useEffect } from "react";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { fetchChatPartners, fetchUserInfo } from "@/lib/fetchers";
+import useWebsocket from "@/hooks/useWebsocket";
+import useAuth from "@/hooks/useAuth";
 
 export default function Conversations() {
   return (
@@ -20,41 +23,55 @@ export default function Conversations() {
 }
 
 function ChatPartnersList() {
-  const [partners, setPartners] = useState<User[]>([]);
-  const [unauthorized, setUnauthorized] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const {
+    partners,
+    loading,
+    activePartner: activeChatPartner,
+    setActivePartner: setActiveChatPartner,
+  } = useChatPartners();
+  // const { partner: activeChatPartner, setPartner: setActiveChatPartner } =
+  //   useOpenedChat();
 
-  const { partner: activeChatPartner, setPartner: setActiveChatPartner } =
-    useOpenedChat();
+  // const { userId: ourId } = useAuth();
+  // const { data: wsData } = useWebsocket();
 
-  useEffect(() => {
-    setLoading(true);
-    const url = `${SERVER_URL}/api/chat-partners`;
-    fetch(url, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
-    })
-      .then((res) => makePayload(res))
-      .then((payload) => {
-        console.log(`Payload for ${url}:`, payload);
-        if (payload.ok) {
-          setPartners(payload.partners || []);
-        } else {
-          setUnauthorized(payload.status === 401);
-          throw new Error(payload.message || "Unknown error");
-        }
-      })
-      .catch((err) => console.log(`Error fetching ${url}: ${err}`))
-      .finally(() => setLoading(false));
-  }, []);
+  // // Fetches chat partners from server during first run, and from session storage afterwards
+  // useEffect(() => {
+  //   setLoading(true);
+  //   fetchChatPartners()
+  //     .then(setPartners)
+  //     .catch(console.error)
+  //     .finally(() => setLoading(false));
+  // }, []);
 
-  if (unauthorized) return <Navigate to="/get-started" />;
-  if (loading)
+  // // Update partners list when message is received
+  // useEffect(() => {
+  //   if (wsData === null) return;
+  //   if (wsData.msgType === "chatMsgReceive") {
+  //     const msg = wsData.msgData as Message;
+  //     const newPartnerId =
+  //       msg.senderId === ourId ? msg.receiverId : msg.senderId;
+  //     fetchUserInfo(newPartnerId)
+  //       .then((user) => {
+  //         const newList = [
+  //           user,
+  //           ...partners.filter((p) => p.id !== newPartnerId),
+  //         ];
+  //         setPartners(newList);
+  //         sessionStorage.setItem(`chatPartners`, JSON.stringify(newList));
+  //       })
+  //       .catch(console.error);
+  //   }
+  // }, [wsData]);
+
+  // if (unauthorized) return <Navigate to="/get-started" />;
+  if (loading) {
     return (
       <ContentCenteredDiv className="gap-2 ">
         <LoadingSpinner /> Loading...
       </ContentCenteredDiv>
     );
+  }
 
   return (
     <ul className="flex-grow overflow-auto w-full px-2 py-4 flex flex-col gap-2">

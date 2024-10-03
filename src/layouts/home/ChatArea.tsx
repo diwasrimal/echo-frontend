@@ -3,7 +3,7 @@ import { LoadingSpinner } from "@/components/LoadingSpinner";
 import MessageInputBox from "@/components/MessageInputBox";
 import UserIcon from "@/components/UserIcon";
 import useAuth from "@/hooks/useAuth";
-import useOpenedChat from "@/hooks/useOpenedChat";
+import useChatPartners from "@/hooks/useChatPartners";
 import useWebsocket from "@/hooks/useWebsocket";
 import { fetchChatMessages } from "@/lib/fetchers";
 import { Message, User } from "@/lib/types";
@@ -12,7 +12,7 @@ import { EllipsisVertical, Phone, Video } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function ChatArea() {
-  const { partner: chatPartner } = useOpenedChat();
+  const { activePartner: chatPartner } = useChatPartners();
 
   if (chatPartner === null) {
     return (
@@ -69,9 +69,35 @@ function ChatMessages({ partner }: { partner: User }) {
   useEffect(() => {
     if (wsData === null) return;
     if (wsData.msgType === "chatMsgReceive") {
-      const newList = [wsData.msgData as Message, ...messages];
-      setMessages(newList);
-      sessionStorage.setItem(`messages-${partner.id}`, JSON.stringify(newList));
+      const msg = wsData.msgData as Message;
+      console.log("receireved message", msg);
+      const msgInvolvesCurrPartner =
+        partner.id === msg.receiverId || partner.id === msg.senderId;
+
+      // If message recieved involves currently active chat partner, then we have
+      // to also update the state of rendered messages
+      // Else if the message involves some other user, that's not currenlty active, then
+      // we can just store the message to sessionStorage which can be retreived later
+      if (msgInvolvesCurrPartner) {
+        const newList = [msg, ...messages];
+        setMessages(newList);
+        sessionStorage.setItem(
+          `messages-${partner.id}`,
+          JSON.stringify(newList),
+        );
+      } else {
+        const otherPartnerId =
+          msg.senderId === ourId ? msg.receiverId : msg.senderId;
+        fetchChatMessages(ourId, otherPartnerId)
+          .then((msgs) => {
+            sessionStorage.setItem(
+              `messages-${otherPartnerId}`,
+              JSON.stringify([msg, ...msgs]),
+            ),
+              console.log("Saving", [msg, ...msgs], "to sessionstorage");
+          })
+          .catch(console.error);
+      }
     }
   }, [wsData]);
 
