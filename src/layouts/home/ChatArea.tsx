@@ -88,13 +88,17 @@ function ChatMessages({ partner }: { partner: User }) {
       } else {
         const otherPartnerId =
           msg.senderId === ourId ? msg.receiverId : msg.senderId;
+
         fetchChatMessages(ourId, otherPartnerId)
-          .then((msgs) => {
+          .then((prevMsgs) => {
+            const msgInPrevMsgs =
+              prevMsgs.length > 0 && prevMsgs[0].id === msg.id;
+            const newList = msgInPrevMsgs ? prevMsgs : [msg, ...prevMsgs];
             sessionStorage.setItem(
               `messages-${otherPartnerId}`,
-              JSON.stringify([msg, ...msgs]),
-            ),
-              console.log("Saving", [msg, ...msgs], "to sessionstorage");
+              JSON.stringify(newList),
+            );
+            console.log("Saving", newList, "to sessionstorage");
           })
           .catch(console.error);
       }
