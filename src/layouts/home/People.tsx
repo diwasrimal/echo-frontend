@@ -169,6 +169,12 @@ function UserActions({
       className={cn("flex gap-2 items-center justify-center", className)}
       {...rest}
     >
+      {/* Just a spinner until status is fetched and set */}
+      {friendshipStatus === "" && (
+        <Button variant="outline" className={btnClass}>
+          <LoadingSpinner />
+        </Button>
+      )}
       {friendshipStatus === "unknown" && (
         // <SendRequestButton
         //   targetUser={targetUser}
