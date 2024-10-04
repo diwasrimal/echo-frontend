@@ -113,7 +113,7 @@ function SearchResults({ results }: { results: User[] }) {
   const { userId: ourId } = useAuth();
 
   return (
-    <ul className="flex-grow overflow-auto w-full px-2 py-4 flex flex-col gap-2">
+    <ul className="flex-grow overflow-auto w-full px-2 flex flex-col gap-2">
       {results.map((user) => {
         return (
           <li
@@ -148,9 +148,9 @@ function UserActions({
   const { setActivePartner: setActiveChatPartner } = useChatPartners();
   const [actionProcessing, setActionProcessing] = useState(false);
 
-  useEffect(updateFriendshipStatus, [targetUser]);
+  useEffect(setFriendshipStatusAgain, [targetUser]);
 
-  function updateFriendshipStatus() {
+  function setFriendshipStatusAgain() {
     const url = `${SERVER_URL}/api/friendship-status/${targetUser.id}`;
     fetch(url, {
       method: "GET",
@@ -204,7 +204,7 @@ function UserActions({
                   title: "Request Sent",
                   description: `Friend request sent to ${targetUser.fullname}.`,
                 });
-                updateFriendshipStatus();
+                setFriendshipStatusAgain();
               })
               .catch(console.error)
               .finally(() => setActionProcessing(false));
@@ -241,13 +241,13 @@ function UserActions({
           title="Cancel Request"
           onClick={() => {
             setActionProcessing(true);
-            cancelFriendRequest(targetUser)
+            deleteFriendRequest(targetUser)
               .then(() => {
                 toast({
                   title: "Request Canceled",
                   description: `Your friend request to ${targetUser.fullname} has been canceled.`,
                 });
-                updateFriendshipStatus();
+                setFriendshipStatusAgain();
               })
               .catch(console.error)
               .finally(() => setActionProcessing(false));
@@ -275,7 +275,7 @@ function UserActions({
             <DropdownMenuItem
               onClick={() =>
                 acceptFriendRequest(targetUser)
-                  .then(updateFriendshipStatus)
+                  .then(setFriendshipStatusAgain)
                   .catch(console.error)
               }
             >
@@ -285,11 +285,12 @@ function UserActions({
               </div>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() =>
-                declineFriendRequest(targetUser)
-                  .then(updateFriendshipStatus)
-                  .catch(console.error)
-              }
+              onClick={() => {
+                console.log("Deleteing request of", targetUser);
+                deleteFriendRequest(targetUser)
+                  .then(setFriendshipStatusAgain)
+                  .catch(console.error);
+              }}
             >
               <div className="flex gap-1">
                 <X size={20} />
@@ -326,12 +327,6 @@ function acceptFriendRequest(targetUser: User): Promise<void> {
   });
 }
 
-function declineFriendRequest(targetUser: User): Promise<void> {
-  return new Promise<void>((resolve, reject) => {
-    reject("TODO: implement decline request");
-  });
-}
-
 function sendFriendRequest(targetUser: User): Promise<void> {
   const url = `${SERVER_URL}/api/friend-requests`;
   return new Promise<void>((resolve, reject) => {
@@ -355,16 +350,15 @@ function sendFriendRequest(targetUser: User): Promise<void> {
   });
 }
 
-function cancelFriendRequest(targetUser: User): Promise<void> {
-  const url = `${SERVER_URL}/api/friend-requests`;
+function deleteFriendRequest(targetUser: User): Promise<void> {
+  console.log("delete");
+  const url = `${SERVER_URL}/api/friend-requests/${targetUser.id}`;
   return new Promise<void>((resolve, reject) => {
     fetch(url, {
       method: "DELETE",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("jwt")}`,
       },
-      body: JSON.stringify({ targetId: targetUser.id }),
     })
       .then((res) => makePayload(res))
       .then((payload) => {
