@@ -17,7 +17,7 @@ import UserIcon from "@/components/UserIcon";
 import { toast } from "@/hooks/use-toast";
 import useAuth from "@/hooks/useAuth";
 import { SERVER_URL } from "@/lib/constants";
-import { User } from "@/lib/types";
+import { User, UserSearchMethod } from "@/lib/types";
 import { cn, debounce, makePayload } from "@/lib/utils";
 import {
   Check,
@@ -37,10 +37,10 @@ export default function People() {
   const [searching, setSearching] = useState(false);
 
   const searchUser = useMemo(() => {
-    return debounce((query: string) => {
+    return debounce((type: UserSearchMethod, query: string) => {
       if (query.length === 0) return;
       const params = new URLSearchParams([
-        ["type", "normal"],
+        ["type", type],
         ["query", query],
       ]);
       setSearching(true);
@@ -78,12 +78,18 @@ export default function People() {
           </span>
           <Input
             className="pl-8 pr-8"
-            placeholder="Find people..."
+            placeholder="Search @username or just name..."
             onChange={(e) => {
-              const query = e.target.value.trim();
-              if (query.length > 0) {
-                searchUser(query);
+              let query = e.target.value.trim();
+              if (!query) return;
+              let searchType: UserSearchMethod;
+              if (query.startsWith("@")) {
+                query = query.substring(1);
+                searchType = "by-username";
+              } else {
+                searchType = "normal";
               }
+              searchUser(searchType, query);
             }}
           />
           {searching && (
@@ -117,7 +123,12 @@ function SearchResults({ results }: { results: User[] }) {
             <div>
               <UserIcon user={user} />
             </div>
-            <div className="flex-grow hover:underline">{user.fullname}</div>
+            <div className="flex-grow hover:underline">
+              <div>{user.fullname}</div>
+              <div className="text-xs text-muted-foreground">
+                @{user.username}
+              </div>
+            </div>
             {user.id !== ourId && <UserActions targetUser={user} />}
           </li>
         );

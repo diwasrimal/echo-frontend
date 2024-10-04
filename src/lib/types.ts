@@ -17,3 +17,5 @@ export type WsPayload = {
   readonly msgType: string;
   readonly msgData: object;
 };
+
+export type UserSearchMethod = "by-username" | "normal";
