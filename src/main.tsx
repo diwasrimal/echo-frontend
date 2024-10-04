@@ -16,9 +16,10 @@ import Login from "./layouts/get-started/Login.tsx";
 import Register from "./layouts/get-started/Register.tsx";
 import Conversations from "./layouts/home/Conversations.tsx";
 import HomeLayout from "./layouts/home/HomeLayout.tsx";
-import People from "./layouts/home/People.tsx";
+import Find from "./layouts/home/Find.tsx";
 import ProtectedRoute from "./wrappers/ProtectedRoute.tsx";
 import SessionCleaner from "./wrappers/SessionCleaner.tsx";
+import Connections from "./layouts/home/Connections.tsx";
 
 const router = createBrowserRouter([
   {
@@ -61,8 +62,12 @@ const router = createBrowserRouter([
         element: <Conversations />,
       },
       {
-        path: "people",
-        element: <People />,
+        path: "find",
+        element: <Find />,
+      },
+      {
+        path: "connections",
+        element: <Connections />,
       },
     ],
   },

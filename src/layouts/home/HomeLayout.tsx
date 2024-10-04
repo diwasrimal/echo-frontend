@@ -8,6 +8,7 @@ import { User } from "@/lib/types";
 import {
   ArrowRightToLine,
   CircleUserRound,
+  ContactRound,
   MessageCircle,
   UserRoundSearch,
 } from "lucide-react";
@@ -57,11 +58,14 @@ function NavBar() {
   return (
     <nav className="flex flex-col justify-between px-2 h-full items-center py-4">
       <ul className="flex flex-col gap-4">
-        <Link to="/home/conversations" title="Chats">
+        <Link to="/home/conversations" title="Your Chats">
           <MessageCircle />
         </Link>
-        <Link to="/home/people" title="People">
+        <Link to="/home/find" title="Find People">
           <UserRoundSearch />
+        </Link>
+        <Link to="/home/connections" title="Your Connections">
+          <ContactRound />
         </Link>
       </ul>
       <ul className="flex flex-col gap-4 items-center">

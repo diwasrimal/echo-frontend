@@ -30,7 +30,7 @@ import { ComponentProps, useEffect, useMemo, useState } from "react";
 import { Navigate } from "react-router-dom";
 import useChatPartners from "@/hooks/useChatPartners";
 
-export default function People() {
+export default function Find() {
   // const [input, setInput] = useState<string>("");
   const [results, setResults] = useState<User[]>([]);
   const [unauthorized, setUnauthorized] = useState(false);
@@ -69,7 +69,7 @@ export default function People() {
   return (
     <div className="overflow-auto h-full flex flex-col">
       <div className="flex-shrink-0 h-[60px] flex items-center justify-center border-b p-2">
-        <h1 className="text-xl font-bold">People</h1>
+        <h1 className="text-xl font-bold">Find People</h1>
       </div>
       <div className="px-2 py-4">
         <div className="relative">
