@@ -1,21 +1,9 @@
-import { ModeToggle } from "@/components/ui/mode-toggle";
+import NavBar from "@/components/NavBar";
 import { Toaster } from "@/components/ui/toaster";
-import UserIcon from "@/components/UserIcon";
-import WebsocketProvider from "@/contexts/WebsocketProvider";
-import useAuth from "@/hooks/useAuth";
-import { fetchUser } from "@/lib/fetchers";
-import { User } from "@/lib/types";
-import {
-  ArrowRightToLine,
-  CircleUserRound,
-  ContactRound,
-  MessageCircle,
-  UserRoundSearch,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link, Outlet } from "react-router-dom";
-import ChatArea from "./ChatArea";
 import ChatPartnersProvider from "@/contexts/ChatPartnersProvider";
+import WebsocketProvider from "@/contexts/WebsocketProvider";
+import { Outlet } from "react-router-dom";
+import ChatArea from "./ChatArea";
 
 export default function HomeLayout() {
   return (
@@ -44,44 +32,5 @@ export default function HomeLayout() {
       </div>
       <Toaster />
     </div>
-  );
-}
-
-function NavBar() {
-  const [user, setUser] = useState<User>();
-  const { userId } = useAuth();
-
-  useEffect(() => {
-    fetchUser(userId).then(setUser).catch(console.error);
-  }, [userId]);
-
-  return (
-    <nav className="flex flex-col justify-between px-2 h-full items-center py-4">
-      <ul className="flex flex-col gap-4">
-        <Link to="/home/conversations" title="Your Chats">
-          <MessageCircle />
-        </Link>
-        <Link to="/home/find" title="Find People">
-          <UserRoundSearch />
-        </Link>
-        <Link to="/home/connections" title="Your Connections">
-          <ContactRound />
-        </Link>
-      </ul>
-      <ul className="flex flex-col gap-4 items-center">
-        <div className="cursor-pointer">
-          {user ? <UserIcon user={user} /> : <CircleUserRound />}
-        </div>
-        <div title="Theme">
-          <ModeToggle />
-        </div>
-        {/* <Link to="/settings" title="Settings">
-          <Settings />
-        </Link> */}
-        <Link to="/logout" title="Logout">
-          <ArrowRightToLine />
-        </Link>
-      </ul>
-    </nav>
   );
 }
