@@ -19,3 +19,8 @@ export type WsPayload = {
 };
 
 export type UserSearchMethod = "by-username" | "normal";
+
+export type FriendRequest = {
+  requestorId: number;
+  receiverId: number;
+};
