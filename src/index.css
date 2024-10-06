@@ -57,8 +57,72 @@
     }
 }
 @layer base {
+    @font-face {
+        font-family: "Geist";
+        font-style: thin;
+        font-weight: 100;
+        font-display: auto;
+        src: url("./assets/fonts/Geist-Thin.woff2") format("woff2");
+    }
+    @font-face {
+        font-family: "Geist";
+        font-style: extralight;
+        font-weight: 200;
+        font-display: auto;
+        src: url("./assets/fonts/Geist-ExtraLight.woff2") format("woff2");
+    }
+    @font-face {
+        font-family: "Geist";
+        font-style: light;
+        font-weight: 300;
+        font-display: auto;
+        src: url("./assets/fonts/Geist-Light.woff2") format("woff2");
+    }
+    @font-face {
+        font-family: "Geist";
+        font-style: normal;
+        font-weight: 400;
+        font-display: auto;
+        src: url("./assets/fonts/Geist-Regular.woff2") format("woff2");
+    }
+    @font-face {
+        font-family: "Geist";
+        font-style: medium;
+        font-weight: 500;
+        font-display: auto;
+        src: url("./assets/fonts/Geist-Medium.woff2") format("woff2");
+    }
+    @font-face {
+        font-family: "Geist";
+        font-style: semibold;
+        font-weight: 600;
+        font-display: auto;
+        src: url("./assets/fonts/Geist-SemiBold.woff2") format("woff2");
+    }
+    @font-face {
+        font-family: "Geist";
+        font-style: bold;
+        font-weight: 700;
+        font-display: auto;
+        src: url("./assets/fonts/Geist-Bold.woff2") format("woff2");
+    }
+    @font-face {
+        font-family: "Geist";
+        font-style: extrabold;
+        font-weight: 800;
+        font-display: auto;
+        src: url("./assets/fonts/Geist-ExtraBold.woff2") format("woff2");
+    }
+    @font-face {
+        font-family: "Geist";
+        font-style: black;
+        font-weight: 900;
+        font-display: auto;
+        src: url("./assets/fonts/Geist-Black.woff2") format("woff2");
+    }
+
     * {
-        @apply border-border;
+        @apply border-border font-geist;
     }
     body {
         @apply bg-background text-foreground;

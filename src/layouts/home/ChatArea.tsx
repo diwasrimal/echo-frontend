@@ -126,9 +126,9 @@ function ChatMessages({ partner }: { partner: User }) {
           <div className="flex flex-col gap-1" key={msg.id}>
             <div
               className={cn(
-                "py-1 px-2 flex max-w-[60%] items-center rounded-md",
+                "py-1 px-3 flex max-w-[60%] items-center rounded-lg text-[0.9rem]",
                 msg.senderId === ourId
-                  ? "border items-end self-end"
+                  ? "border items-end self-end bg-primary text-primary-foreground"
                   : "bg-secondary items-start self-start",
               )}
               title={`${msg.senderId === ourId ? "Sent" : "Received"} on ${msgTime} `}

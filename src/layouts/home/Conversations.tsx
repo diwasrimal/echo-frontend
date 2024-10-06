@@ -81,18 +81,18 @@ function ChatPartnersList() {
           <li
             key={partner.id}
             className={cn(
-              "p-4 flex items-center gap-2 hover:bg-secondary cursor-pointer border rounded-md transition-colors",
-              isActive ? "bg-secondary" : "",
+              "p-4 flex items-center gap-2 cursor-pointer border rounded-md transition-all",
+              isActive ? "border-r-[16px]" : "hover:border-r-[10px]",
             )}
             onClick={() => setActiveChatPartner(partner)}
           >
             <div>
               <UserIcon
                 user={partner}
-                className={isActive ? "bg-background" : "bg-secondary"}
+                // className={isActive ? "bg-background" : "bg-secondary"}
               />
             </div>
-            <div className="flex-grow">{partner.fullname}</div>
+            <div className="flex-grow font-medium">{partner.fullname}</div>
           </li>
         );
       })}

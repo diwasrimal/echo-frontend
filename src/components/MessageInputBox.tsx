@@ -1,7 +1,7 @@
 import useAutosizeTextArea from "@/hooks/useAutosizeTextArea";
 import useWebsocket from "@/hooks/useWebsocket";
 import { User } from "@/lib/types";
-import { File, Image } from "lucide-react";
+import { File, Image, SendHorizontal } from "lucide-react";
 import { ComponentProps, useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
@@ -74,7 +74,13 @@ export default function MessageInputBox({
         className="flex-grow ml-2 max-h-[80px]"
         ref={textareaRef}
       />
-      <Button onClick={sendMessage}>Send</Button>
+      <Button
+        onClick={sendMessage}
+        disabled={text.length === 0}
+        className="px-2"
+      >
+        <SendHorizontal className="stroke-[1]" size={20} />
+      </Button>
     </div>
   );
 }

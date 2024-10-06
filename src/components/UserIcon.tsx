@@ -15,7 +15,7 @@ export default function UserIcon({
     <div
       {...props}
       className={cn(
-        "w-[40px] h-[40px] bg-secondary rounded-[50%] flex justify-center items-center border border-black",
+        "w-[40px] h-[40px] bg-secondary rounded-[50%] flex justify-center items-center ",
         className,
       )}
     >
