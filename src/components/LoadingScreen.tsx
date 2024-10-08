@@ -5,12 +5,18 @@ import Typewriter from "./Typewriter";
 // Initial loading screen that is shown during startup
 export default function LoadingScreen() {
   const [showSpinner, setShowSpinner] = useState(false);
+  const [msg, setMsg] = useState("");
 
   useEffect(() => {
-    const id = setTimeout(() => {
-      setShowSpinner(true);
-    }, 420);
-    return () => clearTimeout(id);
+    const id1 = setTimeout(() => setShowSpinner(true), 420);
+    const id2 = setTimeout(
+      () => setMsg("Initial load might take some time..."),
+      5000,
+    );
+    return () => {
+      clearTimeout(id1);
+      clearTimeout(id2);
+    };
   }, []);
 
   return (
@@ -19,6 +25,7 @@ export default function LoadingScreen() {
         <Typewriter delay={80} text="echo" />
       </h2>
       {showSpinner && <LoadingSpinner size={32} className="text-red-700" />}
+      {msg && <p>{msg}</p>}
     </div>
   );
 }
