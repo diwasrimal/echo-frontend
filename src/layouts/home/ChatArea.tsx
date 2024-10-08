@@ -2,17 +2,21 @@ import ContentCenteredDiv from "@/components/ContentCenteredDiv";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import MessageInputBox from "@/components/MessageInputBox";
 import UserIcon from "@/components/UserIcon";
+import { SmallScreenContext } from "@/contexts/SmallScreenProvider";
 import useAuth from "@/hooks/useAuth";
 import useChatPartners from "@/hooks/useChatPartners";
 import useWebsocket from "@/hooks/useWebsocket";
 import { fetchChatMessages } from "@/lib/fetchers";
 import { Message, User } from "@/lib/types";
 import { cn, formatChatDate } from "@/lib/utils";
-import { EllipsisVertical, Phone, Video } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ArrowLeft, EllipsisVertical, Phone, Video } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
 
 export default function ChatArea() {
   const { activePartner: chatPartner } = useChatPartners();
+
+  const { showOnlyChatColumn, setShowOnlyChatColumn } =
+    useContext(SmallScreenContext);
 
   if (chatPartner === null) {
     return (
@@ -27,6 +31,15 @@ export default function ChatArea() {
       {/* Top title */}
       <div className="flex-shrink-0 h-[60px] border-b flex justify-between items-center px-4">
         <div className="flex gap-2 justify-center items-center">
+          {/* Back button that hides this chat area and shows navbar, and people list */}
+          {showOnlyChatColumn && (
+            <ArrowLeft
+              size={20}
+              className="cursor-pointer"
+              onClick={() => setShowOnlyChatColumn(false)}
+            />
+          )}
+
           <UserIcon user={chatPartner} />
           <div className="font-bold text-lg">{chatPartner.fullname}</div>
         </div>

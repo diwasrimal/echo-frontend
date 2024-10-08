@@ -4,8 +4,15 @@ import { SERVER_URL } from "@/lib/constants";
 import { fetchUserInfo } from "@/lib/fetchers";
 import { Message, User } from "@/lib/types";
 import { makePayload } from "@/lib/utils";
-import { createContext, PropsWithChildren, useEffect, useState } from "react";
+import {
+  createContext,
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useNavigate } from "react-router-dom";
+import { SmallScreenContext } from "./SmallScreenProvider";
 
 type ChatPartnersContextType = {
   loading: boolean;
@@ -75,6 +82,9 @@ export default function ChatPartnersProvider({ children }: PropsWithChildren) {
     }
   }, [wsData]);
 
+  const { isSmallScreen, setShowOnlyChatColumn } =
+    useContext(SmallScreenContext);
+
   const val = {
     loading,
     partners,
@@ -82,6 +92,10 @@ export default function ChatPartnersProvider({ children }: PropsWithChildren) {
     setActivePartner: (partner: User) => {
       localStorage.setItem("activeChatPartner", JSON.stringify(partner));
       setActivePartner(partner);
+      if (isSmallScreen) {
+        console.log("Setting show only chat screen ");
+        setShowOnlyChatColumn(true);
+      }
     },
   };
 

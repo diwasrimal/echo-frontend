@@ -20,6 +20,7 @@ import Find from "./layouts/home/Find.tsx";
 import ProtectedRoute from "./wrappers/ProtectedRoute.tsx";
 import SessionCleaner from "./wrappers/SessionCleaner.tsx";
 import Connections from "./layouts/home/Connections.tsx";
+import { SmallScreenProvider } from "./contexts/SmallScreenProvider.tsx";
 
 const router = createBrowserRouter([
   {
@@ -80,11 +81,13 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <SessionCleaner>
-      <AuthProvider>
-        <ThemeProvider defaultTheme="system">
-          <RouterProvider router={router} />
-        </ThemeProvider>
-      </AuthProvider>
+      <SmallScreenProvider>
+        <AuthProvider>
+          <ThemeProvider defaultTheme="system">
+            <RouterProvider router={router} />
+          </ThemeProvider>
+        </AuthProvider>
+      </SmallScreenProvider>
     </SessionCleaner>
   </StrictMode>,
 );
